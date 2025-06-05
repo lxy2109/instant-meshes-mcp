@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+<cursorrules_remesh>
+type:Always
+description:模型网格重构时，重构工具选用。
+
+规则内容：
+-当提出网格重构时，系统分析我的需求，优先选择调用instant meshes的重构工具，传入对应的参数。
+-如果instant meshes重构失败或者有其他的原因，则选择3D建模引擎提供的网格重构工具。
+
+</cursorrules_remesh>

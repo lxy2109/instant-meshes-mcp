@@ -1,0 +1,5 @@
+.specstory/
+logs/
+output_remesh/
+temp/
+.cursorindexingignore 
