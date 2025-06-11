@@ -3,3 +3,4 @@ logs/
 output_remesh/
 temp/
 .cursorindexingignore 
+_pycache_/
