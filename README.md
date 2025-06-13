@@ -171,7 +171,7 @@ python server.py
     "instant-meshes-mcp": {
       "command": "python",
       "args": [
-        "H:/MCPCourseMaking/instant-meshes-mcp/server.py"
+        "your_abs_dir/instant-meshes-mcp/server.py"
       ],
       "env": {
         "PYTHONUNBUFFERED": "1"
