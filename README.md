@@ -29,10 +29,31 @@
 - Python 3.8+
 - Windows 10/11
 - 需放置`Instant Meshes.exe`于项目根目录
+- **Blender 3.6**（用于GLB文件处理和贴图提取）
 
 ## 安装依赖
 ```bash
 pip install -r requirements.txt
+```
+
+## Blender 3.6 配置
+系统会自动检测Blender 3.6安装位置，支持多种安装方式：
+
+**自动检测路径：**
+- 标准安装：`C:\Program Files\Blender Foundation\Blender 3.6\`
+- 便携版：`[用户自定义路径]\Blender\3.6\`（如 `D:\Software\Blender\3.6\`）
+- Steam版：`C:\Program Files (x86)\Steam\steamapps\common\Blender\`
+
+**手动配置（可选）：**
+```bash
+# 设置环境变量（根据实际安装路径修改）
+set BLENDER_EXECUTABLE=D:\Software\Blender\3.6\blender.exe
+```
+
+**验证安装：**
+```python
+# 测试Blender检测
+result = await test_blender_detection_tool()
 ```
 
 ## MCP工具函数
@@ -45,7 +66,7 @@ pip install -r requirements.txt
 result = await process_model(
     input_model="model.glb",
     target_faces=5000,
-    operation="auto"  # auto/simplify/remesh
+    operation="simplify"  # auto/simplify/remesh
 )
 
 # 纯减面处理
@@ -174,7 +195,8 @@ python server.py
         "your_abs_dir/instant-meshes-mcp/server.py"
       ],
       "env": {
-        "PYTHONUNBUFFERED": "1"
+        "PYTHONUNBUFFERED": "1",
+        "BLENDER_PATH":"your_blender3.6.abs_dir"
       }
     }
   }
@@ -194,7 +216,7 @@ print(f"推荐目标: {analysis['mesh_quality']['recommended_target_faces']}")
 result = await process_model(
     input_model="input.glb",
     target_faces=analysis['mesh_quality']['recommended_target_faces'],
-    operation="auto"
+    operation="simplify"
 )
 
 # 3. 管理归档
@@ -221,6 +243,53 @@ result = await process_model(
 - **requests**: 远程文件下载
 - **psutil**: 进程管理
 - **mcp**: MCP协议支持
+
+## 系统要求
+
+### Blender 3.6
+本系统需要 **Blender 3.6** 来处理GLB文件的转换和贴图提取：
+
+**自动检测功能：**
+- 系统会自动检测Blender 3.6安装位置
+- 支持标准安装、便携版、Steam版等多种安装方式
+- 支持Windows注册表查找和通配符路径展开
+
+**检测优先级：**
+1. `BLENDER_EXECUTABLE` 环境变量（完整可执行文件路径）
+2. `BLENDER_PATH` 环境变量（Blender安装目录）
+3. 自动检测常见安装位置
+4. PATH环境变量搜索
+
+**常见安装路径：**
+- 标准安装：`C:\Program Files\Blender Foundation\Blender 3.6\blender.exe`
+- 便携版：`[用户自定义路径]\Blender\3.6\blender.exe`（如 `D:\Software\Blender\3.6\blender.exe`）
+- Steam版：`C:\Program Files (x86)\Steam\steamapps\common\Blender\blender.exe`
+
+**手动配置（可选）：**
+```bash
+# 设置环境变量指定Blender路径（根据实际安装路径修改）
+set BLENDER_EXECUTABLE=D:\Software\Blender\3.6\blender.exe
+# 或设置Blender安装目录
+set BLENDER_PATH=D:\Software\Blender\3.6
+```
+
+**功能说明：**
+- GLB文件转换为OBJ格式（含MTL材质文件）
+- 自动提取GLB中的嵌入贴图（颜色、法线、ORM等）
+- 支持PBR材质的完整转换
+- 生成与第三方工具兼容的OBJ/MTL文件
+
+**检测诊断：**
+可使用内置的检测工具验证Blender配置：
+```python
+# 测试Blender检测功能
+result = await test_blender_detection_tool()
+```
+
+如果自动检测失败，请：
+1. 确认已安装Blender 3.6
+2. 设置相应的环境变量
+3. 检查Blender可执行文件权限
 
 ## 目录结构
 ```
@@ -269,10 +338,13 @@ archives/model_20241201_143022/
 
 ## 注意事项
 - 仅支持Windows平台（依赖Instant Meshes.exe）
+- **需要安装Blender 3.6**（用于GLB文件处理和贴图提取）
 - 输入支持OBJ和GLB格式
 - 输出统一为GLB格式，保留材质和贴图
+- GLB文件会自动通过Blender转换为OBJ进行处理，然后转回GLB
 - 所有临时文件在处理完成后自动清理
 - 日志文件按时间戳命名，便于追踪处理历史
+- Blender进程独立运行，不会阻塞主程序
 
 ## 错误处理
 - 明确的错误信息和日志记录
